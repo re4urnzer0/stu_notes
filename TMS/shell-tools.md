@@ -64,3 +64,38 @@ That means we can **rewire** those streams by using `>` and `<`.
 - `<` -> rewire **input stream**
 
 We can use `>>` to **append to a file**.
+
+### Shell Scirpting
+
+Most shells have their own scripting language with *variables, control flow and its own syntax.*
+For this section we will focus on **bash** scripting since it is the most common.
+
+#### basics on Bash scripting
+- Assign variables in Bash:
+  ```
+  foo=bar
+  echo "$foo"
+  # prints bar
+  echo '$foo'
+  # prints $foo
+  ```
+  (Strings in bash can be defined with `'` and `"` delimiters, but they are **not equivalent.** Strings delimited with `'` are literal strings and will not substitute variable values whereas `"` delimiterd strings will.)
+- Functions with arguments
+  ```
+  mcd () {
+    mkdir -p "$1"
+    cd "$1"
+  }
+  ```
+  `$1` means the *first argument* to the script/function.
+  Unlike other scripting languages, bash uses a variety of special variables to refer to arguments, error codes, and other relevant variables. More information about special variables in <a href="https://tldp.org/LDP/abs/html/special-chars.html">Here.</a>
+  Some examples:
+  - `$0` **Name of the script**
+  - `$1` to `$9` **Arguments to the script.** *`$1` is the first argument and so on.*
+  - `$@` **All the arguments**
+  - `$#` **Number of arguments**
+  - `$?` **Return code of the previous command**
+  - `$$` **Process identification number(PID) for the current script**
+  - `!!` **Entire last command, including arguments.** *A common pattern is to execute a command only for it to fail due to missing permissions; you can quickly re-execute the command with sudo by doing `sudo !!`*
+  - `$_` **Last argument from the last command.** If you are in interactive shell, you can also quickly get this value by typing `Esc`  followed by `.` or `Alt+.`
+
