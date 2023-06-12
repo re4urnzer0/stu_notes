@@ -26,7 +26,7 @@ Prints the current date and time.
 #### `echo` (with arguments)
 Simply prints out its arguments.
 (If arguments include *whitespace*, you should quote the argument with `'` or `"`, or escape just the relevant characters with `\`.)
-```
+```bash
 echo My Photos (It will create two directory, /My and /Photos)
 
 echo My\ Photos (equals the following formats)
@@ -72,7 +72,7 @@ For this section we will focus on **bash** scripting since it is the most common
 
 #### basics on Bash scripting
 - Assign variables in Bash:
-  ```
+  ```bash
   foo=bar
   echo "$foo"
   # prints bar
@@ -81,7 +81,7 @@ For this section we will focus on **bash** scripting since it is the most common
   ```
   (Strings in bash can be defined with `'` and `"` delimiters, but they are **not equivalent.** Strings delimited with `'` are literal strings and will not substitute variable values whereas `"` delimiterd strings will.)
 - Functions with arguments
-  ```
+  ```bash
   mcd () {
     mkdir -p "$1"
     cd "$1"
@@ -99,3 +99,54 @@ For this section we will focus on **bash** scripting since it is the most common
   - `!!` **Entire last command, including arguments.** *A common pattern is to execute a command only for it to fail due to missing permissions; you can quickly re-execute the command with sudo by doing `sudo !!`*
   - `$_` **Last argument from the last command.** If you are in interactive shell, you can also quickly get this value by typing `Esc`  followed by `.` or `Alt+.`
 
+- Program Return Code
+Commmands will return *output* using `stdout`, *error* with `stderr`.
+The **Return Code** or **exit status** is *the way scripts/commands have to communicate how execution went.*
+Generally, A value of `0` means *everything went OK*; **anything different from 0** means *an error occurred.*
+Some examples like:
+  ```bash
+  false || echo "Oops, fail"
+  # Oops, fail
+
+  true || echo "Will not be printed"
+  # 
+
+  true && echo "Things went well"
+  # Things went well
+
+  false && echo "Will not be printed"
+  #
+
+  true ; echo "This will always run"
+  # This will always run
+
+  false ; echo "This will always run"
+  # This will always run
+  ```
+- Command substitution
+**Get the output of a command as a variable.**
+Whenever you place `$( CMD )` it will execute `CMD`, get the output of the command and substitute it in place. For example, if you do `for file in $(ls)`, the shell will first call `ls`, and then iterate over those values. A lesser known similar feature is **process substitution**. Be like `<( CMD )` will execute `CMD` and place the output in a temporary file and substitute the `<()` with that file's name. This is useful when commands expect values to be passed by file instead of by `STDIN`. A example: `diff <(ls foo) <(ls bar)` will show differences between files in dirs `foo` and `bar`.
+
+A complete example:
+  ```bash
+  #!/bin/bash
+
+  echo "Starting program at $(date)" # Date will be substituted
+
+  echo "Running program $0 with $# arguments with pid $$"
+  # $0 -> name of the script
+  # $# -> number of the arguments
+  # $$ -> PID of the current script
+
+  for file in "$@"; do
+      grep foobar "$file" > /dev/null 2> /dev/null
+      # When pattern is not found, grep has exit status 1
+      # We redirect STDOUT and STDERR to a null register since we don't care about them
+      if [[ $? -ne 0 ]]; then
+          echo "File $file does not have any foobar,  adding one"
+          echo "# foobar" >> "$file"
+      fi
+  done
+  ```
+
+This program will iterate through the arguments we provide, `grep` for the string `foobar`, and append it to the file as a comment if it's not found.
