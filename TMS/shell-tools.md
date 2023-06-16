@@ -150,3 +150,51 @@ A complete example:
   ```
 
 This program will iterate through the arguments we provide, `grep` for the string `foobar`, and append it to the file as a comment if it's not found.
+(When performing **comparisons** in bash, **try to use double brackets `[[ ]]` in favor of simple brackets `[ ]`**. More details in <a href=http://mywiki.wooledge.org/BashFAQ/031>Here.</a>)
+
+- Globbing (expanding expressions by carrying out filename expansion)
+  - Wildcard
+    - `?`: match **one** character
+    - `*`: match **any amount of** characters
+  - Curly braces `{}`
+  Whenever you have a **common substring** in a series of commands, you can curly braces for bash to expand this automatically. (Frequently using in *moving or converting files.*)
+  Simple example:
+  ```bash
+  convert iamge.{png, jpg}
+  # will expand to 
+  convert image.png image.jpg
+
+  cp /path/to/project/{foo,bar,baz}.sh /newpath
+  # will expand to 
+  cp /path/to/project/foo.sh /path/to/project/bar.sh /path/to/project/baz.sh /newpath
+
+  # Globbing techniques can also be combined
+  mv *{.py,.sh} folder
+  # will move all *.py and *.sh files
+
+  mkdir foo bar
+  # This creates files foo/a, foo/b, ... foo/h, bar/a, bar/b, ... /h
+  touch {foo, bar}/{a...h}
+
+  touche foo/x bar/y
+  #show difference between files in foo and bar
+  diff <(ls foo) <(ls bar)
+  #Outputs
+  #< x
+  #---
+  #> y
+  ```
+Scripts **not necessarily be written in bash** to be called from the terminal. We can use other program language to call bash script, belike:
+```python
+#!/usr/local/bin/python
+import sys
+for arg in reversed(sys.argv[1:]):
+    print(arg)
+```
+The kernel knows to execute this script with a python interpreter instead of a shell command because the first line we called <a href=https://en.wikipedia.org/wiki/Shebang_(Unix)>shebang</a>.
+
+Some differences between shell functions and scripts that you should keep in mind are:
+- Functions have to be in the same languages as the shell, while script can be written in any language. This is why including a shebang for scripts is important.
+- Functions are loaded once when their definition is read. Scripts are loaded every time they are executed. This makes functions slightly faster to load, but whenever you change them you will have to reload their definition.
+- Functions are executed in the current shell environment whereas scripts execute in their own process. Thus, functions can modify environment variables, e.g.change your current directory, whereasa scripts can't. Scripts will be passed by value environment variables that have been exported using `export`
+- As with any programming language, functions are powerful construct to achieve modularity, code reuse, and clarity of shell code. Often shell scripts will include their own function definitions
