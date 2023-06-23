@@ -198,3 +198,26 @@ Some differences between shell functions and scripts that you should keep in min
 - Functions are loaded once when their definition is read. Scripts are loaded every time they are executed. This makes functions slightly faster to load, but whenever you change them you will have to reload their definition.
 - Functions are executed in the current shell environment whereas scripts execute in their own process. Thus, functions can modify environment variables, e.g.change your current directory, whereasa scripts can't. Scripts will be passed by value environment variables that have been exported using `export`
 - As with any programming language, functions are powerful construct to achieve modularity, code reuse, and clarity of shell code. Often shell scripts will include their own function definitions
+
+### Shell Tools
+
+#### Finding how to use commands
+- Using `man` or `TLDR pages`
+```bash
+man rm
+# or 
+tldr rm
+```
+
+#### Finding files
+We can use `find` to find files or directories.
+```bash
+# Find all directories named src
+find . -name src -type d
+# Find all python files that have a folder named test in their path
+find . -path '*/test/*.py' -type f
+# Find all files modified in the last day
+find . -mtime -1
+# Find all zip files with size in range 500k to 10M
+find . -size +500k -size -10M -name '*.taz.gz'
+```
