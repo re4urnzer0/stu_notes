@@ -64,6 +64,12 @@ That means we can **rewire** those streams by using `>` and `<`.
 - `<` -> rewire **input stream**
 
 We can use `>>` to **append to a file**.
+```bash
+echo hello > hello.txt
+cat hello.txt
+cat < hello.txt
+cat < hello.txt > hello2.txt
+```
 
 ### Shell Scirpting
 
